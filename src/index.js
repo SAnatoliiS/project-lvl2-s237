@@ -1,5 +1,7 @@
-import readlineSync from 'readline-sync';
+// import readlineSync from 'readline-sync';
 
-export const hello = () => {
+const hello = () => {
   console.log('Welcome to gendiff!');
 };
+
+export default hello;
