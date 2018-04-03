@@ -1,11 +1,13 @@
 {
   "name": "anatolii-gendiff",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "babel-node": "babel-node",
+    "flow": "flow",
+    "flow-typed": "flow-typed",
     "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
     "prepublishOnly": "npm run build",
     "eslint": "eslint"
@@ -19,6 +21,9 @@
   "files": [
     "dist"
   ],
+  "jest": {
+    "testEnvironment": "node"
+  },
   "bin": {
     "gendiff": "dist/bin/gendiff.js"
   },
@@ -38,6 +43,8 @@
   },
   "dependencies": {
     "commander": "^2.15.1",
+    "flow": "^0.2.3",
+    "jest": "^22.4.3",
     "npm": "^5.8.0",
     "readline-sync": "^1.4.9"
   }
