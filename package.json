@@ -1,0 +1,44 @@
+{
+  "name": "anatolii-gendiff",
+  "version": "0.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "babel-node": "babel-node",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublishOnly": "npm run build",
+    "eslint": "eslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SAnatoliiS/project-lvl2-s237.git"
+  },
+  "author": "Sergeev Anatolii",
+  "license": "ISC",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "gendiff": "dist/bin/gendiff.js"
+  },
+  "bugs": {
+    "url": "https://github.com/SAnatoliiS/project-lvl2-s237/issues"
+  },
+  "homepage": "https://github.com/SAnatoliiS/project-lvl2-s237#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^4.18.2",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0"
+  },
+  "dependencies": {
+    "commander": "^2.15.1",
+    "npm": "^5.8.0",
+    "readline-sync": "^1.4.9"
+  }
+}
