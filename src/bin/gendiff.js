@@ -4,12 +4,13 @@ import gendiff from '..';
 const program = require('commander');
 
 program
+  .version('0.0.1')
   .description('Compares two configuration files and shows a difference.')
-  .option('-h, --help', 'output usage information')
-  .option('-v, --version', 'output the version number')
   .option('-f, --format [type]', 'Output format');
 program
-  .arguments('[options] <firstConfig> <secondConfig>')
-  .action((options, firstConfig, secondConfig) => gendiff(firstConfig, secondConfig));
+  .arguments('<firstConfig> <secondConfig>')
+  .action(gendiff);
 
 program.parse(process.argv);
+if (program.help) program.help();
+console.log(program.help);

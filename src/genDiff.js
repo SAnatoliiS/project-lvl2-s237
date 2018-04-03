@@ -1,5 +1,5 @@
 function gendiff(firstConfig, secondConfig) {
-    console.log('done!');
+    console.log(firstConfig === secondConfig);
   }
 export default gendiff;
   
