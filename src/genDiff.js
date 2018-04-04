@@ -21,8 +21,6 @@ function gendiff(firstConfig, secondConfig) {
     if (_.has(firstConfigAsObj, key)) return acc;
     return `${acc}\n  + ${key}: ${secondConfigAsObj[key]}`;
   }, preResult);
-  const finalResult = `${result}\n}`;
-  console.log(finalResult);
-  return finalResult;
+  return `${result}\n}`;
 }
 export default gendiff;

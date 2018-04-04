@@ -8,6 +8,8 @@ program
   .option('-f, --format [type]', 'Output format');
 program
   .arguments('<firstConfig> <secondConfig>')
-  .action(gendiff);
+  .action((firstConfig, secondConfig) => {
+    console.log(gendiff(firstConfig, secondConfig));
+  });
 
 program.parse(process.argv);
