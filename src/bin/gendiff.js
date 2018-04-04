@@ -12,5 +12,3 @@ program
   .action(gendiff);
 
 program.parse(process.argv);
-if (program.help) program.help();
-console.log(program.help);
