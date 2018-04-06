@@ -11,7 +11,7 @@ test('gendiff(JSON)', () => {
 });
 
 test('gendiff(YAML)', () => {
-  const example = fs.readFileSync('./__tests__/__fixtures__/result', 'utf-8');
+  const example = fs.readFileSync('./__tests__/__fixtures__/flatResult', 'utf-8');
   expect(gendiff(
     './__tests__/__fixtures__/before.yaml',
     './__tests__/__fixtures__/after.yaml',
@@ -19,7 +19,7 @@ test('gendiff(YAML)', () => {
 });
 
 test('gendiff(INI)', () => {
-  const example = fs.readFileSync('./__tests__/__fixtures__/result', 'utf-8');
+  const example = fs.readFileSync('./__tests__/__fixtures__/flatResult', 'utf-8');
   expect(gendiff(
     './__tests__/__fixtures__/before.ini',
     './__tests__/__fixtures__/after.ini',
