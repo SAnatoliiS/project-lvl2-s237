@@ -1,12 +1,14 @@
 import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
-import { safeLoad } from 'js-yaml';
+import { safeLoad as parseYaml } from 'js-yaml';
+import { decode as parseIni } from 'ini';
 
 const parsers = {
   '.json': JSON.parse,
-  '.yaml': safeLoad,
-  '.yml': safeLoad,
+  '.yaml': parseYaml,
+  '.yml': parseYaml,
+  '.ini': parseIni,
 };
 
 const fileReader = filePath => fs.readFileSync(filePath, 'UTF-8');

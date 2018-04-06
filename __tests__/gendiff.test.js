@@ -17,3 +17,11 @@ test('gendiff(YAML)', () => {
     './__tests__/__fixtures__/after.yaml',
   )).toBe(example);
 });
+
+test('gendiff(INI)', () => {
+  const example = fs.readFileSync('./__tests__/__fixtures__/result', 'utf-8');
+  expect(gendiff(
+    './__tests__/__fixtures__/before.ini',
+    './__tests__/__fixtures__/after.ini',
+  )).toBe(example);
+});
