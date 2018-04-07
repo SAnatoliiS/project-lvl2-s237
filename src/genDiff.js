@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { safeLoad as parseYaml } from 'js-yaml';
 import { decode as parseIni } from 'ini';
+import renderer from './renderers';
 
 const parsers = {
   '.json': JSON.parse,
@@ -20,67 +21,37 @@ const getParser = extractor => (config) => {
   return configParsed;
 };
 
-const tab = 4;
-
-const stringify = (obj, indent) => {
-  const preResult = Object.keys(obj).reduce((acc, key) => {
-    const value = obj[key];
-    if (_.isObject(value)) return stringify(value, indent + tab);
-    return `${acc}\n${' '.repeat(indent + tab)}${key}: ${value}`;
-  }, '{');
-  return `${preResult}\n${' '.repeat(indent)}}`;
-};
-
-const activities = {
-  unchanged: (indent, key, firstVal) =>
-    `\n${' '.repeat(indent)}${key}: ${firstVal}`,
-  changed: (indent, key, firstVal, secondVal) =>
-    `\n${' '.repeat(indent - (tab / 2))}+ ${key}: ${secondVal}\n${' '.repeat(indent - (tab / 2))}- ${key}: ${firstVal}`,
-  delete: (indent, key, firstVal) =>
-    `\n${' '.repeat(indent - (tab / 2))}- ${key}: ${firstVal}`,
-  add: (indent, key, firstVal, secondVal) =>
-    `\n${' '.repeat(indent - (tab / 2))}+ ${key}: ${secondVal}`,
-};
-
 const astBuilder = (beforeConfig, afterConfig) =>
   _.union(Object.keys(beforeConfig), Object.keys(afterConfig))
     .reduce((acc, key) => {
       const beforeValue = beforeConfig[key];
       const afterValue = afterConfig[key];
+      const child = {
+        key,
+        label: '',
+        beforeValue,
+        afterValue,
+        children: [],
+      };
       if (_.has(beforeConfig, key)) {
         if (_.has(afterConfig, key)) {
           if (_.isObject(beforeValue) && _.isObject(afterValue)) {
-            return { ...acc, [key]: astBuilder(beforeValue, afterValue) };
+            child.label = 'complex';
+            child.children = [...astBuilder(beforeValue, afterValue).children];
+            return { ...acc, children: _.concat(acc.children, child) };
           } else if (beforeValue === afterValue) {
-            return { ...acc, [key]: 'unchanged' };
+            child.label = 'unchanged';
+            return { ...acc, children: _.concat(acc.children, child) };
           }
-          return { ...acc, [key]: 'changed' };
+          child.label = 'changed';
+          return { ...acc, children: _.concat(acc.children, child) };
         }
-        return { ...acc, [key]: 'delete' };
+        child.label = 'deleted';
+        return { ...acc, children: _.concat(acc.children, child) };
       }
-      return { ...acc, [key]: 'add' };
-    }, {});
-
-const renderer = (astConfigTree, beforeConfig, afterConfig, indent = tab) => {
-  const preResult = Object.keys(astConfigTree).reduce((acc, key) => {
-    const firstValue = beforeConfig[key];
-    const secondValue = afterConfig[key];
-    const astNode = astConfigTree[key];
-    if (_.isObject(astNode)) {
-      return `${acc}\n${' '.repeat(indent)}${key}: ${renderer(astNode, firstValue, secondValue, indent + tab)}`;
-    }
-    const activity = activities[astNode];
-    if (_.isObject(firstValue)) {
-      return `${acc}${activity(indent, key, stringify(firstValue, indent), secondValue)}`;
-    }
-    if (_.isObject(secondValue)) {
-      return `${acc}${activity(indent, key, firstValue, stringify(secondValue, indent))}`;
-    }
-    return `${acc}${activity(indent, key, firstValue, secondValue)}`;
-  }, '{');
-  const result = `${preResult}\n${' '.repeat(indent - 4)}}`;
-  return result;
-};
+      child.label = 'added';
+      return { ...acc, children: _.concat(acc.children, child) };
+    }, { label: 'head', children: [] });
 
 export default function gendiff(firstConfig, secondConfig) {
   const parser = getParser(fileReader);
@@ -89,7 +60,6 @@ export default function gendiff(firstConfig, secondConfig) {
   const secondConfigParsed = parser(secondConfig);
 
   const astDiff = astBuilder(firstConfigParsed, secondConfigParsed);
-  console.log(astDiff.toString());
-  const diff = renderer(astDiff, firstConfigParsed, secondConfigParsed);
+  const diff = renderer(astDiff);
   return diff;
 }

@@ -25,3 +25,4 @@ test('gendiff(INI)', () => {
     './__tests__/__fixtures__/after.ini',
   )).toBe(example);
 });
+
