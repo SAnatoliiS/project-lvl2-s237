@@ -12,8 +12,12 @@ const stringify = (obj, indent) => {
 };
 
 const activities = {
-  complex: (indent, key) =>
-    `${' '.repeat(indent)}${key}: {`,
+  complex: (indent, key, firstVal, secondVal, children, render) => {
+    const preRes = render(children, indent + tab);
+    const openBrace = `${' '.repeat(indent)}${key}: {`;
+    const closeBrace = `${' '.repeat(indent)}}`;
+    return [openBrace, ...preRes, closeBrace];
+  },
   unchanged: (indent, key, firstVal) =>
     `${' '.repeat(indent)}${key}: ${firstVal}`,
   changed: (indent, key, firstVal, secondVal) =>
@@ -26,24 +30,16 @@ const activities = {
 };
 
 const render = (astConfigTree, indent) => {
-<<<<<<< HEAD
-=======
-//  const closedBrace = `${' '.repeat(indent)}}`;
->>>>>>> 7692648e00ed1de6e9c6896e3aafd56ad7f0b4fa
   const difference = astConfigTree.map((node) => {
     const {
       key, type, beforeValue, afterValue, children,
     } = node;
     const activity = activities[type];
-    if (type === 'complex') {
-      const preRes = render(children, indent + tab);
-      return _.concat(activity(indent, key), preRes, `${' '.repeat(indent)}}`);
-    }
     const simpleBeforeValue = _.isObject(beforeValue) ?
       stringify(beforeValue, indent) : beforeValue;
     const simpleAfterValue = _.isObject(afterValue) ?
       stringify(afterValue, indent) : afterValue;
-    return activity(indent, key, simpleBeforeValue, simpleAfterValue);
+    return activity(indent, key, simpleBeforeValue, simpleAfterValue, children, render);
   });
   return _.flatten(difference);
 };

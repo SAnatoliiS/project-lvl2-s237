@@ -10,6 +10,15 @@ test('gendiff(JSON)', () => {
   )).toBe(example);
 });
 
+test('planeDiff(JSON)', () => {
+  const example = fs.readFileSync('./__tests__/__fixtures__/flatResult', 'utf-8');
+  expect(gendiff(
+    './__tests__/__fixtures__/before.json',
+    './__tests__/__fixtures__/after.json',
+    'plane',
+  )).toBe(example);
+});
+
 test('gendiff(YAML)', () => {
   const example = fs.readFileSync('./__tests__/__fixtures__/flatSimpleResult', 'utf-8');
   expect(gendiff(

@@ -41,31 +41,31 @@ const buildAst = (beforeConfig, afterConfig) =>
               type: 'complex',
               children: buildAst(beforeValue, afterValue),
             };
-            return _.concat(acc, newChild);
+            return [...acc, newChild];
           } else if (beforeValue === afterValue) {
             const newChild = {
               ...child,
               type: 'unchanged',
             };
-            return _.concat(acc, newChild);
+            return [...acc, newChild];
           }
           const newChild = {
             ...child,
             type: 'changed',
           };
-          return _.concat(acc, newChild);
+          return [...acc, newChild];
         }
         const newChild = {
           ...child,
           type: 'deleted',
         };
-        return _.concat(acc, newChild);
+        return [...acc, newChild];
       }
       const newChild = {
         ...child,
         type: 'added',
       };
-      return _.concat(acc, newChild);
+      return [...acc, newChild];
     }, []);
 
 export default function gendiff(firstConfig, secondConfig, formatType = 'default') {

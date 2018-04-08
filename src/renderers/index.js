@@ -1,10 +1,10 @@
 // import readlineSync from 'readline-sync';
-import defaultRender from './defaultRenderer';
-import flatRender from './flatRenderer';
+import diffRender from './diffRenderer';
+import planeRender from './planeRenderer';
 
 const renderTypes = {
-  default: defaultRender,
-  plane: flatRender,
+  default: diffRender,
+  plane: planeRender,
 };
 
 const render = (astDiff, formatType) => renderTypes[formatType](astDiff);
