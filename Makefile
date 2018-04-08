@@ -8,4 +8,7 @@ lint:
 	npm run eslint .
 test:
 	npm test
-
+proc:
+	gendiff --format plain ./__tests__/__fixtures__/before.ini ./__tests__/__fixtures__/after.ini
+prog:
+	/home/anatolii/Project2/src/bin/gendiff.js --format plain ./__tests__/__fixtures__/before.ini ./__tests__/__fixtures__/after.ini

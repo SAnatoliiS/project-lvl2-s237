@@ -13,39 +13,36 @@ const stringify = (obj, indent) => {
 
 const activities = {
   complex: (indent, key) =>
-    `\n${' '.repeat(indent)}${key}: {`,
+    `${' '.repeat(indent)}${key}: {`,
   unchanged: (indent, key, firstVal) =>
-    `\n${' '.repeat(indent)}${key}: ${firstVal}`,
+    `${' '.repeat(indent)}${key}: ${firstVal}`,
   changed: (indent, key, firstVal, secondVal) =>
-    `\n${' '.repeat(indent - (tab / 2))}+ ${key}: ${secondVal}\n${' '.repeat(indent - (tab / 2))}- ${key}: ${firstVal}`,
+    [`${' '.repeat(indent - (tab / 2))}+ ${key}: ${secondVal}`,
+      `${' '.repeat(indent - (tab / 2))}- ${key}: ${firstVal}`],
   deleted: (indent, key, firstVal) =>
-    `\n${' '.repeat(indent - (tab / 2))}- ${key}: ${firstVal}`,
+    `${' '.repeat(indent - (tab / 2))}- ${key}: ${firstVal}`,
   added: (indent, key, firstVal, secondVal) =>
-    `\n${' '.repeat(indent - (tab / 2))}+ ${key}: ${secondVal}`,
+    `${' '.repeat(indent - (tab / 2))}+ ${key}: ${secondVal}`,
 };
 
-const defaultRenderer = (astConfigTree, indent = 0) => {
-  const iter = (astTree, iterIndent, acc) => {
+const render = (astConfigTree, indent) => {
+  const difference = astConfigTree.map((node) => {
     const {
-      key, label, beforeValue, afterValue, children,
-    } = astTree;
-    const activity = activities[label];
-    if (children.length > 0) {
-      const newAcc = label === 'head' ? acc : `${acc}${activity(iterIndent, key)}`;
-      const preRes = children
-        .reduce((redAcc, child) => iter(child, iterIndent + tab, redAcc), newAcc);
-      return `${preRes}\n${' '.repeat(iterIndent)}}`;
+      key, type, beforeValue, afterValue, children,
+    } = node;
+    const activity = activities[type];
+    if (type === 'complex') {
+      const preRes = render(children, indent + tab);
+      return _.concat(activity(indent, key), preRes, `${' '.repeat(indent)}}`);
     }
-    if (_.isObject(beforeValue)) {
-      return `${acc}${activity(iterIndent, key, stringify(beforeValue, iterIndent), afterValue)}`;
-    }
-    if (_.isObject(afterValue)) {
-      return `${acc}${activity(iterIndent, key, beforeValue, stringify(afterValue, iterIndent))}`;
-    }
-    return `${acc}${activity(iterIndent, key, beforeValue, afterValue)}`;
-  };
-  const result = iter(astConfigTree, indent, '{');
-  return result;
+    const simpleBeforeValue = _.isObject(beforeValue) ?
+      stringify(beforeValue, indent) : beforeValue;
+    const simpleAfterValue = _.isObject(afterValue) ?
+      stringify(afterValue, indent) : afterValue;
+    return activity(indent, key, simpleBeforeValue, simpleAfterValue);
+  });
+  return _.flatten(difference);
 };
 
-export default defaultRenderer;
+export default astConfigTree => _.concat('{', render(astConfigTree, tab), '}').join('\n');
+

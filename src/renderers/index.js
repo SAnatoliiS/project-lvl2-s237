@@ -1,26 +1,12 @@
 // import readlineSync from 'readline-sync';
-import defaultRenderer from './defaultRenderer';
-// import flatRenderer from './flatRenderer';
+import defaultRender from './defaultRenderer';
+import flatRender from './flatRenderer';
 
-function DefaultRender() {
-  this.exec = defaultRenderer;
-}
-/*
-DefaultRender.prototype = new DefaultRender();
-DefaultRender.prototype.constructor = DefaultRender;
+const renderTypes = {
+  default: defaultRender,
+  plane: flatRender,
+};
 
-function FlatRender() {
-  this.exec = flatRenderer;
-}
-FlatRender.prototype = new DefaultRender();
-FlatRender.prototype.constructor = FlatRender;
-*/
-function Context(renderType) {
-  function choisenRenderer(astConfigTree) {
-    return renderType.exec(astConfigTree);
-  }
-  this.exec = choisenRenderer;
-}
-const renderer = new Context(new DefaultRender()).exec;
+const render = (astDiff, formatType) => renderTypes[formatType](astDiff);
 
-export default renderer;
+export default render;
