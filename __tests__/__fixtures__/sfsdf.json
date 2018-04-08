@@ -1,0 +1,16 @@
+
+  {
+    "filePath":"D:\\workspace\\work\\test.js",
+    "messages":[{"ruleId":"comma-dangle",
+      "severity":2,
+      "message":"Missing trailing comma.",
+      "line":3,
+      "column":14,
+      "nodeType":"Property",
+      "source":"  qux: \"quux\"",
+      "fix":{"range":[39,39],"text":","}}],
+      "errorCount":1,
+      "warningCount":0,
+      "source":"var foo = {\n  bar: \"baz\",\n  qux: \"quux\"\n};\n"
+    }
+    

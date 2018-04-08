@@ -1,15 +1,15 @@
 import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
-import { safeLoad as parseYaml } from 'js-yaml';
-import { decode as parseIni } from 'ini';
+import { safeLoad } from 'js-yaml';
+import ini from 'ini';
 import render from './renderers';
 
 const parsers = {
   '.json': JSON.parse,
-  '.yaml': parseYaml,
-  '.yml': parseYaml,
-  '.ini': parseIni,
+  '.yaml': safeLoad,
+  '.yml': safeLoad,
+  '.ini': ini.parse,
 };
 
 const readConfig = filePath => fs.readFileSync(filePath, 'UTF-8');
@@ -39,34 +39,34 @@ const buildAst = (beforeConfig, afterConfig) =>
             const newChild = {
               ...child,
               type: 'complex',
-              children: [...buildAst(beforeValue, afterValue).children],
+              children: buildAst(beforeValue, afterValue),
             };
-            return { ...acc, children: _.concat(acc.children, newChild) };
+            return _.concat(acc, newChild);
           } else if (beforeValue === afterValue) {
             const newChild = {
               ...child,
               type: 'unchanged',
             };
-            return { ...acc, children: _.concat(acc.children, newChild) };
+            return _.concat(acc, newChild);
           }
           const newChild = {
             ...child,
             type: 'changed',
           };
-          return { ...acc, children: _.concat(acc.children, newChild) };
+          return _.concat(acc, newChild);
         }
         const newChild = {
           ...child,
           type: 'deleted',
         };
-        return { ...acc, children: _.concat(acc.children, newChild) };
+        return _.concat(acc, newChild);
       }
       const newChild = {
         ...child,
         type: 'added',
       };
-      return { ...acc, children: _.concat(acc.children, newChild) };
-    }, { type: 'head', children: [] });
+      return _.concat(acc, newChild);
+    }, []);
 
 export default function gendiff(firstConfig, secondConfig, formatType = 'default') {
   const parse = getParser(readConfig);

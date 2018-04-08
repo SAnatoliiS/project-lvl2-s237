@@ -1,30 +1,28 @@
 import _ from 'lodash';
 
 const activities = {
-  changed: (acc, key, beforeValue, afterValue) => {
+  changed: (path, beforeValue, afterValue) => {
     const firstVal = _.isObject(beforeValue) ? 'complex value' : `${beforeValue}`;
     const secondVal = _.isObject(afterValue) ? 'complex value' : `${afterValue}`;
-    return `${acc}Property '${key}' was updated. From '${firstVal}' to '${secondVal}'\n`;
+    return `Property '${path}' was updated. From '${firstVal}' to '${secondVal}'`;
   },
-  deleted: (acc, key) =>
-    `${acc}Property '${key}' was removed\n`,
-  added: (acc, key, beforeValue, afterValue) => {
+  deleted: path => `Property '${path}' was removed`,
+  added: (path, beforeValue, afterValue) => {
     const secondVal = _.isObject(afterValue) ? 'complex value' : `value: ${afterValue}`;
-    return `${acc}Property '${key}' was added with ${secondVal}\n`;
+    return `Property '${path}' was added with ${secondVal}`;
   },
 };
 
-const flatRenderer = (astConfigTree) => {
-  const iter = (astTree, acc, path = '') => {
+const render = (astConfigTree, path) => {
+  const difference = astConfigTree.filter(node => node.type !== 'unchanged').map((node) => {
     const {
       key, type, beforeValue, afterValue, children,
-    } = astTree;
+    } = node;
     const fullPath = path === '' ? key : `${path}.${key}`;
-    if (type === 'complex' || type === 'head') return children.reduce((redAcc, child) => iter(child, redAcc, fullPath), acc);
-    if (type === 'unchanged') return acc;
-    return activities[type](acc, fullPath, beforeValue, afterValue);
-  };
-  return iter(astConfigTree, '');
+    if (type === 'complex') return render(children, fullPath);
+    return activities[type](fullPath, beforeValue, afterValue);
+  });
+  return _.flatten(difference);
 };
 
-export default flatRenderer;
+export default astConfigTree => render(astConfigTree, '').join('\n');
