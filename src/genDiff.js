@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { safeLoad as parseYaml } from 'js-yaml';
 import { decode as parseIni } from 'ini';
-import renderer from './renderers';
+import render from './renderers';
 
 const parsers = {
   '.json': JSON.parse,
@@ -12,7 +12,7 @@ const parsers = {
   '.ini': parseIni,
 };
 
-const fileReader = filePath => fs.readFileSync(filePath, 'UTF-8');
+const readConfig = filePath => fs.readFileSync(filePath, 'UTF-8');
 
 const getParser = extractor => (config) => {
   const ext = path.extname(config);
@@ -21,14 +21,14 @@ const getParser = extractor => (config) => {
   return configParsed;
 };
 
-const astBuilder = (beforeConfig, afterConfig) =>
+const buildAst = (beforeConfig, afterConfig) =>
   _.union(Object.keys(beforeConfig), Object.keys(afterConfig))
     .reduce((acc, key) => {
       const beforeValue = beforeConfig[key];
       const afterValue = afterConfig[key];
       const child = {
         key,
-        label: '',
+        type: '',
         beforeValue,
         afterValue,
         children: [],
@@ -36,30 +36,45 @@ const astBuilder = (beforeConfig, afterConfig) =>
       if (_.has(beforeConfig, key)) {
         if (_.has(afterConfig, key)) {
           if (_.isObject(beforeValue) && _.isObject(afterValue)) {
-            child.label = 'complex';
-            child.children = [...astBuilder(beforeValue, afterValue).children];
-            return { ...acc, children: _.concat(acc.children, child) };
+            const newChild = {
+              ...child,
+              type: 'complex',
+              children: [...buildAst(beforeValue, afterValue).children],
+            };
+            return { ...acc, children: _.concat(acc.children, newChild) };
           } else if (beforeValue === afterValue) {
-            child.label = 'unchanged';
-            return { ...acc, children: _.concat(acc.children, child) };
+            const newChild = {
+              ...child,
+              type: 'unchanged',
+            };
+            return { ...acc, children: _.concat(acc.children, newChild) };
           }
-          child.label = 'changed';
-          return { ...acc, children: _.concat(acc.children, child) };
+          const newChild = {
+            ...child,
+            type: 'changed',
+          };
+          return { ...acc, children: _.concat(acc.children, newChild) };
         }
-        child.label = 'deleted';
-        return { ...acc, children: _.concat(acc.children, child) };
+        const newChild = {
+          ...child,
+          type: 'deleted',
+        };
+        return { ...acc, children: _.concat(acc.children, newChild) };
       }
-      child.label = 'added';
-      return { ...acc, children: _.concat(acc.children, child) };
-    }, { label: 'head', children: [] });
+      const newChild = {
+        ...child,
+        type: 'added',
+      };
+      return { ...acc, children: _.concat(acc.children, newChild) };
+    }, { type: 'head', children: [] });
 
-export default function gendiff(firstConfig, secondConfig) {
-  const parser = getParser(fileReader);
+export default function gendiff(firstConfig, secondConfig, formatType = 'default') {
+  const parse = getParser(readConfig);
 
-  const firstConfigParsed = parser(firstConfig);
-  const secondConfigParsed = parser(secondConfig);
+  const firstConfigParsed = parse(firstConfig);
+  const secondConfigParsed = parse(secondConfig);
 
-  const astDiff = astBuilder(firstConfigParsed, secondConfigParsed);
-  const diff = renderer(astDiff);
+  const astDiff = buildAst(firstConfigParsed, secondConfigParsed);
+  const diff = render(astDiff, formatType);
   return diff;
 }
