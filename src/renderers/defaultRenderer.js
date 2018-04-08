@@ -26,6 +26,10 @@ const activities = {
 };
 
 const render = (astConfigTree, indent) => {
+<<<<<<< HEAD
+=======
+//  const closedBrace = `${' '.repeat(indent)}}`;
+>>>>>>> 7692648e00ed1de6e9c6896e3aafd56ad7f0b4fa
   const difference = astConfigTree.map((node) => {
     const {
       key, type, beforeValue, afterValue, children,
