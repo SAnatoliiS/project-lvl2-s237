@@ -2,13 +2,15 @@ import _ from 'lodash';
 
 const tab = 2;
 
+const addTab = indent => `${' '.repeat(indent + tab)}`;
+
 const stringify = (obj, indent) => {
   const preResult = Object.keys(obj).reduce((acc, key) => {
     const value = obj[key];
     if (_.isObject(value)) return stringify(value, indent + tab);
     return `${acc}\n${' '.repeat(indent + (tab * 2))}"${key}": "${value}"`;
   }, '{');
-  return `${preResult}\n${' '.repeat(indent + tab)}}`;
+  return `${preResult}\n${addTab(indent)}}`;
 };
 
 const getSimpleValue = (value, indent) =>
@@ -27,16 +29,16 @@ const activities = {
   unchanged: (indent, key, firstVal) =>
     [
       getOpenedKey(indent, key),
-      `${' '.repeat(indent + tab)}"type": "unchanged",`,
-      `${' '.repeat(indent + tab)}"value": ${firstVal}`,
+      `${addTab(indent)}"type": "unchanged",`,
+      `${addTab(indent)}"value": ${firstVal}`,
       getClosedBrace(indent),
     ].join('\n'),
   changed: (indent, key, firstVal, secondVal) =>
     [
       getOpenedKey(indent, key),
-      `${' '.repeat(indent + tab)}"type": "changed",`,
-      `${' '.repeat(indent + tab)}"last value": ${firstVal},`,
-      `${' '.repeat(indent + tab)}"value": ${secondVal}`,
+      `${addTab(indent)}"type": "changed",`,
+      `${addTab(indent)}"last value": ${firstVal},`,
+      `${addTab(indent)}"value": ${secondVal}`,
       getClosedBrace(indent),
     ].join('\n'),
   deleted: (indent, key) =>
@@ -46,8 +48,8 @@ const activities = {
   added: (indent, key, firstVal, secondVal) =>
     [
       getOpenedKey(indent, key),
-      `${' '.repeat(indent + tab)}"type": "added",`,
-      `${' '.repeat(indent + tab)}"value": ${secondVal}`,
+      `${addTab(indent)}"type": "added",`,
+      `${addTab(indent)}"value": ${secondVal}`,
       getClosedBrace(indent),
     ].join('\n'),
 };
