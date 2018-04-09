@@ -8,7 +8,7 @@ const activities = {
   added: (path, beforeValue, afterValue) => `Property '${path}' was added with value: ${afterValue}`,
 };
 
-const getSimpleValue = value => (_.isObject(value) ? 'complex value' : `${value}`);
+const getStringValue = value => (_.isObject(value) ? 'complex value' : `${value}`);
 
 
 const render = (astConfigTree, path) => {
@@ -17,9 +17,9 @@ const render = (astConfigTree, path) => {
       key, type, beforeValue, afterValue, children,
     } = node;
     const fullPath = path === '' ? key : `${path}.${key}`;
-    const firstSimpleValue = getSimpleValue(beforeValue);
-    const secondSimpleValue = getSimpleValue(afterValue);
-    return activities[type](fullPath, firstSimpleValue, secondSimpleValue, render, children);
+    const firstStringValue = getStringValue(beforeValue);
+    const secondStringValue = getStringValue(afterValue);
+    return activities[type](fullPath, firstStringValue, secondStringValue, render, children);
   });
   return _.flatten(difference);
 };

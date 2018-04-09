@@ -11,7 +11,7 @@ const stringify = (obj, indent) => {
   return `${preResult}\n${' '.repeat(indent)}}`;
 };
 
-const getSimpleValue = (value, indent) => (_.isObject(value) ? stringify(value, indent) : value);
+const getStringValue = (value, indent) => (_.isObject(value) ? stringify(value, indent) : value);
 
 const activities = {
   complex: (indent, key, firstVal, secondVal, children, render) => {
@@ -37,9 +37,9 @@ const render = (astConfigTree, indent) => {
       key, type, beforeValue, afterValue, children,
     } = node;
     const activity = activities[type];
-    const simpleBeforeValue = getSimpleValue(beforeValue, indent);
-    const simpleAfterValue = getSimpleValue(afterValue, indent);
-    return activity(indent, key, simpleBeforeValue, simpleAfterValue, children, render);
+    const stringBeforeValue = getStringValue(beforeValue, indent);
+    const stringAfterValue = getStringValue(afterValue, indent);
+    return activity(indent, key, stringBeforeValue, stringAfterValue, children, render);
   });
   return _.flatten(difference);
 };

@@ -9,7 +9,7 @@ const stringify = (obj) => {
   return `{ ${preResult} }`;
 };
 
-const getSimpleValue = value =>
+const getStringValue = value =>
   (_.isObject(value) ? stringify(value) : `"${value}"`);
 
 const render = (astConfigTree) => {
@@ -17,15 +17,13 @@ const render = (astConfigTree) => {
     const {
       key, type, beforeValue, afterValue, children,
     } = node;
-    const simpleBeforeValue = getSimpleValue(beforeValue);
-    const simpleAfterValue = getSimpleValue(afterValue);
-    //    const activity = activities[type];
-    //    if (type === 'complex') return
+    const stringBeforeValue = getStringValue(beforeValue);
+    const stringAfterValue = getStringValue(afterValue);
     const preRes = [
       `"key": "${key}",`,
       `"type": "${type}",`,
-      `"last value": ${simpleBeforeValue},`,
-      `"new value": ${simpleAfterValue},`,
+      `"last value": ${stringBeforeValue},`,
+      `"new value": ${stringAfterValue},`,
       `"children": ${type === 'complex' ? `[\n${render(children)}\n]` : '"[]"'}`,
     ].join('\n');
     return `{\n${preRes}\n}`;
