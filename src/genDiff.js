@@ -43,29 +43,13 @@ const buildAst = (beforeConfig, afterConfig) =>
             };
             return [...acc, newChild];
           } else if (beforeValue === afterValue) {
-            const newChild = {
-              ...child,
-              type: 'unchanged',
-            };
-            return [...acc, newChild];
+            return [...acc, { ...child, type: 'unchanged' }];
           }
-          const newChild = {
-            ...child,
-            type: 'changed',
-          };
-          return [...acc, newChild];
+          return [...acc, { ...child, type: 'changed' }];
         }
-        const newChild = {
-          ...child,
-          type: 'deleted',
-        };
-        return [...acc, newChild];
+        return [...acc, { ...child, type: 'deleted' }];
       }
-      const newChild = {
-        ...child,
-        type: 'added',
-      };
-      return [...acc, newChild];
+      return [...acc, { ...child, type: 'added' }];
     }, []);
 
 export default function gendiff(firstConfig, secondConfig, formatType = 'default') {
