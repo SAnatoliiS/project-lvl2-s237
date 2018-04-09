@@ -11,12 +11,14 @@ const stringify = (obj, indent) => {
   return `${preResult}\n${' '.repeat(indent)}}`;
 };
 
+const getSimpleValue = (value, indent) => (_.isObject(value) ? stringify(value, indent) : value);
+
 const activities = {
   complex: (indent, key, firstVal, secondVal, children, render) => {
     const preRes = render(children, indent + tab);
-    const openBrace = `${' '.repeat(indent)}${key}: {`;
-    const closeBrace = `${' '.repeat(indent)}}`;
-    return [openBrace, ...preRes, closeBrace];
+    const openedValue = `${' '.repeat(indent)}${key}: {`;
+    const closedBrace = `${' '.repeat(indent)}}`;
+    return [openedValue, ...preRes, closedBrace];
   },
   unchanged: (indent, key, firstVal) =>
     `${' '.repeat(indent)}${key}: ${firstVal}`,
@@ -35,10 +37,8 @@ const render = (astConfigTree, indent) => {
       key, type, beforeValue, afterValue, children,
     } = node;
     const activity = activities[type];
-    const simpleBeforeValue = _.isObject(beforeValue) ?
-      stringify(beforeValue, indent) : beforeValue;
-    const simpleAfterValue = _.isObject(afterValue) ?
-      stringify(afterValue, indent) : afterValue;
+    const simpleBeforeValue = getSimpleValue(beforeValue, indent);
+    const simpleAfterValue = getSimpleValue(afterValue, indent);
     return activity(indent, key, simpleBeforeValue, simpleAfterValue, children, render);
   });
   return _.flatten(difference);

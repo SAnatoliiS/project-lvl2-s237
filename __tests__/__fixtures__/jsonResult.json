@@ -1,33 +1,33 @@
 {
   "common": {
     "setting1": {
-      "action": "wasn't change",
+      "type": "unchanged",
       "value": "Value 1"
     },
-    "setting2": "was deleted",
+    "setting2": "deleted",
     "setting3": {
-      "action": "changed",
-      "last value": true,
-      "current value": {
+      "type": "changed",
+      "last value": "true",
+      "value": {
         "key": "value"
       }
     },
     "setting6": {
       "key": {
-        "action": "wasn't change",
+        "type": "unchanged",
         "value": "value"
       },
       "ops": {
-        "action": "added",
+        "type": "added",
         "value": "vops"
       }
     },
     "setting4": {
-      "action": "added",
+      "type": "added",
       "value": "blah blah"
     },
     "setting5": {
-      "action": "added",
+      "type": "added",
       "value": {
         "key5": "value5"
       }
@@ -35,25 +35,25 @@
   },
   "group1": {
     "baz": {
-      "action": "changed",
+      "type": "changed",
       "last value": "bas",
-      "current value": "bars" 
+      "value": "bars"
     },
     "foo": {
-      "action": "wasn't change",
+      "type": "unchanged",
       "value": "bar"
     },
     "nest": {
-      "action": "changed",
+      "type": "changed",
       "last value": {
         "key": "value"
       },
-      "current value": "str"
+      "value": "str"
     }
   },
-  "group2": "was deleted",
+  "group2": "deleted",
   "group3": {
-    "action": "added",
+    "type": "added",
     "value": {
       "fee": "100500"
     }

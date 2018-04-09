@@ -3,7 +3,7 @@ import gendiff from '../src';
 
 
 test('gendiff(JSON)', () => {
-  const example = fs.readFileSync('./__tests__/__fixtures__/result', 'utf-8');
+  const example = fs.readFileSync('./__tests__/__fixtures__/diffResult', 'utf-8');
   expect(gendiff(
     './__tests__/__fixtures__/before.json',
     './__tests__/__fixtures__/after.json',
@@ -16,6 +16,15 @@ test('planeDiff(JSON)', () => {
     './__tests__/__fixtures__/before.json',
     './__tests__/__fixtures__/after.json',
     'plane',
+  )).toBe(example);
+});
+
+test('jsonDiff(JSON)', () => {
+  const example = fs.readFileSync('./__tests__/__fixtures__/jsonResult.json', 'utf-8');
+  expect(gendiff(
+    './__tests__/__fixtures__/before.json',
+    './__tests__/__fixtures__/after.json',
+    'json',
   )).toBe(example);
 });
 
